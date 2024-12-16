@@ -16,6 +16,10 @@ datasource db {
 model Category {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
-  createdAt DateTime @default(now()) @db.Timestamp() // Automatically set to the current time when created
-  updatedAt DateTime @updatedAt @db.Timestamp() // Automatically updated to the current time on every update
+  // createdAt DateTime @default(now()) @db.Timestamp() // Automatically set to the current time when created
+  // updatedAt DateTime @updatedAt @db.Timestamp() // Automatically updated to the current time on every update
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("categories")
 }

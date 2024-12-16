@@ -6,27 +6,43 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { TWebResponse } from 'src/model/web.model';
 import { ZodError } from 'zod';
 
 @Catch()
 export class ErrorFilter<T> implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
     const response: Response = host.switchToHttp().getResponse();
+    let result: {
+      status: HttpStatus;
+      json: TWebResponse;
+    };
 
     if (exception instanceof HttpException) {
-      response.status(exception.getStatus()).json({
-        message: exception?.message,
-        errors: exception.getResponse(),
-      });
+      result = {
+        status: exception.getStatus(),
+        json: {
+          message: exception?.message,
+          errors: exception.getResponse(),
+        },
+      };
     } else if (exception instanceof ZodError) {
-      response.status(HttpStatus.BAD_REQUEST).json({
-        message: 'Validation error',
-        errors: exception,
-      });
+      result = {
+        status: HttpStatus.BAD_REQUEST,
+        json: {
+          message: 'Validation error',
+          errors: exception,
+        },
+      };
     } else {
-      response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: exception?.message,
-      });
+      result = {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        json: {
+          message: exception?.message,
+        },
+      };
     }
+
+    response.status(result.status).json(result.json);
   }
 }
