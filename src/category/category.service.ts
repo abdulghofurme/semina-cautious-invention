@@ -2,9 +2,9 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Category } from '@prisma/client';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import {
-  CategoryRequestPayload,
   CategoryResponse,
 } from 'src/model/category.model';
+import { TCategoryRequestPayload } from './category.validation';
 
 @Injectable()
 export class CategoryService {
@@ -30,7 +30,7 @@ export class CategoryService {
     return category;
   }
 
-  async create(payload: CategoryRequestPayload): Promise<CategoryResponse> {
+  async create(payload: TCategoryRequestPayload): Promise<CategoryResponse> {
     const category = await this.prismaService.category.create({
       data: payload,
     });
@@ -52,7 +52,7 @@ export class CategoryService {
 
   async update(
     id: string,
-    payload: CategoryRequestPayload,
+    payload: TCategoryRequestPayload,
   ): Promise<CategoryResponse> {
     let category = await this.checkIsCategoryExist(id);
 

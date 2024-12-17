@@ -1,6 +1,6 @@
-export class CategoryRequestPayload {
-  name: string;
-}
+// export class CategoryRequestPayload {
+//   name: string;
+// }
 
 export class CategoryResponse {
   id: string;

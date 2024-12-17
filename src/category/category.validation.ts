@@ -8,3 +8,5 @@ export class CategoryValidation {
       .max(20, 'Panjang nama kategori maksimal 20 karakter'),
   });
 }
+
+export type TCategoryRequestPayload = z.infer<typeof CategoryValidation.CREATE>;
