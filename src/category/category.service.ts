@@ -1,9 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Category } from '@prisma/client';
 import { PrismaService } from 'src/common/prisma/prisma.service';
-import {
-  CategoryResponse,
-} from 'src/model/category.model';
+import { CategoryResponse } from 'src/model/category.model';
 import { TCategoryRequestPayload } from './category.validation';
 
 @Injectable()
@@ -24,8 +22,10 @@ export class CategoryService {
       where: { id },
     });
 
-    if (!category)
-      throw new HttpException('kategori tidak ditemukan', HttpStatus.NOT_FOUND);
+    if (!category) {
+      throw new HttpException('Kategori tidak ditemukan', HttpStatus.NOT_FOUND);
+      // throw new HttpException({foo: 'bar'}, HttpStatus.NOT_FOUND);
+    }
 
     return category;
   }

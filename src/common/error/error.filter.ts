@@ -7,10 +7,21 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { TWebResponse } from 'src/model/web.model';
-import { ZodError } from 'zod';
+import { ZodError, ZodIssue } from 'zod';
 
 @Catch()
 export class ErrorFilter<T> implements ExceptionFilter {
+  zodErrorToKeyedObject(error: ZodError): Record<string, string> {
+    return error.errors.reduce(
+      (acc, issue) => {
+        const key = issue.path.join('.');
+        acc[key] = issue.message;
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
   catch(exception: any, host: ArgumentsHost) {
     const response: Response = host.switchToHttp().getResponse();
     let result: {
@@ -23,7 +34,7 @@ export class ErrorFilter<T> implements ExceptionFilter {
         status: exception.getStatus(),
         json: {
           message: exception?.message,
-          errors: exception.getResponse(),
+          // errors: exception.getResponse(),
         },
       };
     } else if (exception instanceof ZodError) {
@@ -31,7 +42,7 @@ export class ErrorFilter<T> implements ExceptionFilter {
         status: HttpStatus.BAD_REQUEST,
         json: {
           message: 'Validation error',
-          errors: exception,
+          errors: this.zodErrorToKeyedObject(exception),
         },
       };
     } else {
